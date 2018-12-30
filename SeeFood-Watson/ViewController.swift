@@ -9,6 +9,7 @@
 import UIKit
 import VisualRecognitionV3
 import SVProgressHUD
+import Social
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
@@ -17,6 +18,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBOutlet weak var cameraButton: UIBarButtonItem!
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var topBarImageView: UIImageView!
+    @IBOutlet weak var shareButton: UIButton!
     
     let imagePicker = UIImagePickerController()
     var classificationResults : [String] = []
@@ -24,6 +27,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        shareButton.isHidden = true
         imagePicker.delegate = self
     }
     
@@ -36,6 +40,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
 
+        shareButton.isHidden = true
         cameraButton.isEnabled = false
         SVProgressHUD.show()
 
@@ -65,16 +70,23 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                         
                         DispatchQueue.main.async {
                             self.cameraButton.isEnabled = true
+                            self.shareButton.isHidden = false
                             SVProgressHUD.dismiss()
                         }
                         
                         if self.classificationResults.contains("hotdog") {
                             DispatchQueue.main.async {
                                 self.navigationItem.title = "Hotdog!"
+                                self.navigationController?.navigationBar.barTintColor = UIColor.green
+                                self.navigationController?.navigationBar.isTranslucent = false
+                                self.topBarImageView.image = UIImage(named: "hotdog")
                             }
                         } else {
                             DispatchQueue.main.async {
                                 self.navigationItem.title = "Not Hotdog!"
+                                self.navigationController?.navigationBar.barTintColor = UIColor.red
+                                self.navigationController?.navigationBar.isTranslucent = false
+                                self.topBarImageView.image = UIImage(named: "not-hotdog")
                             }
                         }
                     }
@@ -84,7 +96,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             print("There was an error picking the image")
         }
     }
-    
 
+    @IBAction func shareTapped(_ sender: UIButton) {
+        
+        let share = [UIImage(named: "hotdogBackground") as Any, "MY food is \(String(describing: navigationItem.title ?? ""))"] as [Any]
+        let activityViewController = UIActivityViewController(activityItems: share, applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view
+        self.present(activityViewController, animated: true, completion: nil)
+    }
 }
 
