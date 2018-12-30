@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  SeaFood-Watson
+//  SeeFood-Watson
 //
 //  Created by Nozomu Kuwae on 2018/12/25.
 //  Copyright © 2018 NKCompany. All rights reserved.
